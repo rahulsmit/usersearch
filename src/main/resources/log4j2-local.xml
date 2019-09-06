@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT" class="ch.qos.logback.core.ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%r [%t] %p %c %x - %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <asyncLogger name="org.apache.log4j.xml" level="info"/>
+        <asyncLogger name="com.rahul" level="info"/>
+        <asyncRoot level="info">
+            <AppenderRef ref="STDOUT"/>
+        </asyncRoot>
+    </Loggers>
+</Configuration>

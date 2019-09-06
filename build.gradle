@@ -1,0 +1,81 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.7.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
+	id 'idea'
+	id 'eclipse'
+	//jib builds docker images for java projects very easily
+	id 'com.google.cloud.tools.jib' version '1.1.2'
+}
+
+group = 'com.rahul'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+repositories {
+	mavenCentral()
+}
+
+eclipse {
+	classpath {
+		downloadJavadoc = true
+		downloadSources = true
+	}
+}
+
+idea {
+	module {
+		downloadJavadoc = true
+		downloadSources = true
+	}
+}
+
+ext {
+	// project dependency versions
+	springDataElasticSearchVersion='3.2.0.RC2'
+	lombokVersion = '1.16.20'
+
+	// test dependency versions
+	assertjVersion = '3.11.1'
+	mockitoVersion = '2.27.0'
+	restAssuredVersion = '3.0.3'
+}
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-actuator')
+	implementation('org.elasticsearch.client:elasticsearch-rest-high-level-client:6.4.1')
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-cache')
+	implementation('org.springframework.data:spring-data-redis:2.1.7.RELEASE')
+	implementation('redis.clients:jedis:2.9.0')
+	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+	implementation("org.projectlombok:lombok:${lombokVersion}")
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.0.0'
+
+}
+
+jib {
+	to {
+		version = 1.0
+		tags = ['latest', version.toString()]
+		image = rootProject.name
+	}
+
+	container {
+		mainClass = 'com.rahul.usersearch.UserSearchApplication'
+		jvmFlags = ["-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:MaxRAMFraction=2", "-Xss512k", "-XX:+UseConcMarkSweepGC", "-XX:+UseParNewGC", "-XX:NewRatio=1" ]
+		ports = ['8080']
+		environment = ["app": project.name ]
+	}
+}
+
+tasks.build.dependsOn tasks.jibDockerBuild
+
+springBoot {
+	mainClassName = "com.rahul.usersearch.UserSearchApplication"
+}
+
+bootRun {
+	jvmArgs = ['-Dspring.profiles.active=local', '-Dlog4j.configurationFile=log4j2-local.xml']
+}
