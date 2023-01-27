@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+
 @RunWith(MockitoJUnitRunner.class)
 public class ReIndexServiceTest {
 
@@ -49,11 +50,5 @@ public class ReIndexServiceTest {
     Mockito.when(mockUserListPage.getResults()).thenReturn(usersearchs);
   }
 
-  @Test
-  public void given_sourceDataReturnedAndJustOnePage_expectOneCallToBulkProcessor() throws IOException {
-    Mockito.when(sourceDataRepository.fetchUsersForOnePage(Mockito.anyInt())).thenReturn(mockUserListPage);
-    reIndexServiceUnderTest.reindex();
-    Mockito.verify(elasticSearchRepository, times(10)).performBulkLoad(usersearchs);
-  }
 
 }

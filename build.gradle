@@ -47,6 +47,8 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-cache')
 	implementation('org.springframework.data:spring-data-redis:2.1.7.RELEASE')
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	implementation('org.apache.commons:commons-lang3:3.12.0')
 	implementation('redis.clients:jedis:2.9.0')
 	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 	implementation("org.projectlombok:lombok:${lombokVersion}")
@@ -64,7 +66,7 @@ jib {
 
 	container {
 		mainClass = 'com.rahul.usersearch.UserSearchApplication'
-		jvmFlags = ["-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:MaxRAMFraction=2", "-Xss512k", "-XX:+UseConcMarkSweepGC", "-XX:+UseParNewGC", "-XX:NewRatio=1" ]
+		jvmFlags = [ '-Djavax.net.debug=ssl', '-Djavax.net.ssl.trustStore=certificate-host.pem', '-Dlog4j.configurationFile=log4j2-local.xml', "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:MaxRAMFraction=2", "-Xss512k", "-XX:+UseConcMarkSweepGC", "-XX:+UseParNewGC", "-XX:NewRatio=1" ]
 		ports = ['8080']
 		environment = ["app": project.name ]
 	}
@@ -77,5 +79,11 @@ springBoot {
 }
 
 bootRun {
-	jvmArgs = ['-Dspring.profiles.active=local', '-Dlog4j.configurationFile=log4j2-local.xml']
+	jvmArgs = ['-Dspring.profiles.active=local', '-Dlog4j.configurationFile=log4j2-local.xml', '-Djavax.net.ssl.trustStore=es-truststore.jks']
+}
+
+bootJar {
+	manifest {
+		attributes 'Start-Class': 'com.rahul.usersearch.UserSearchApplication'
+	}
 }

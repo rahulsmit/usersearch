@@ -19,7 +19,7 @@ public class RestResponseEntityExceptionHandler
   @ExceptionHandler(value
       = { IOException.class, IllegalStateException.class, java.net.ConnectException.class })
   protected ResponseEntity<Object> handlIOError(Exception ex, WebRequest request) {
-    log.error("Error handled in advice: " + ex.getMessage());
+    log.error("Error handled in advice: ", ex);
     return handleExceptionInternal(ex, "INTERNAL SERVER ERROR",
         new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
@@ -27,7 +27,7 @@ public class RestResponseEntityExceptionHandler
   @ExceptionHandler(value
       = { ElasticsearchStatusException.class })
   protected ResponseEntity<Object> handleIndexException(Exception ex, WebRequest request) {
-    log.error("Error handled in advice: " + ex.getMessage());
+    log.error("Error handled in advice: ", ex);
     return handleExceptionInternal(ex, "PLEASE CREATE INDEX FIRST",
         new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }

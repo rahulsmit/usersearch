@@ -58,8 +58,8 @@ public class ElasticMetadataUtil {
    */
   public int getIndexDocumentCount() throws IOException {
     RestClient lowLevelClient = restHighLevelClient.getLowLevelClient();
-    Response refresh = lowLevelClient.performRequest("POST", indexName + "/_refresh");
-    Response countResponse = lowLevelClient.performRequest("GET", indexName+"/_count");
+    Response refresh = lowLevelClient.performRequest("POST", indexName + "*/_refresh");
+    Response countResponse = lowLevelClient.performRequest("GET", indexName+"*/_count");
     JsonNode jsonNode = objectMapper.readValue(countResponse.getEntity().getContent(), JsonNode.class);
     return jsonNode.findValue("count").asInt();
   }

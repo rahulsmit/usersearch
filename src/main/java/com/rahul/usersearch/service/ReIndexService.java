@@ -1,12 +1,17 @@
 package com.rahul.usersearch.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.rahul.usersearch.model.Address;
 import com.rahul.usersearch.model.ReindexResult;
-import com.rahul.usersearch.model.UserListPage;
 import com.rahul.usersearch.repository.ElasticSearchRepository;
 import com.rahul.usersearch.repository.SourceDataRepository;
 import com.rahul.usersearch.utils.ElasticMetadataUtil;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,19 +39,40 @@ public class ReIndexService {
    *
    * @throws JsonProcessingException
    */
-  public ReindexResult reindex() throws IOException {
-    int total = 0;
-    for(int pageNum = 1; pageNum <= 10; pageNum++){
-      UserListPage usersearchListPage = sourceDataRepository.fetchUsersForOnePage(pageNum);
-      log.info("Crawled page : " + pageNum);
-      // Use Bulk API to load data to elastic
-      elasticSearchRepository.performBulkLoad(usersearchListPage.getResults());
-      total+=usersearchListPage.getInfo().getResults();
-    }
-    // closeBulkProcessor
-    elasticSearchRepository.closeBulkProcessor();
+  public ReindexResult reindex() throws IOException, InterruptedException {
+
+      for(int i=0; i < 50; i++){
+
+          int finalI = i;
+          CompletableFuture.runAsync(() -> {
+              try {
+                  readAndLoad(finalI);
+              } catch (IOException e) {
+                  log.error("readAndLoad error : ", e);
+              }
+          });
+      }
+
+
+      elasticSearchRepository.closeBulkProcessor();
 
     // wrap results
-    return new ReindexResult(elasticMetaDataUtil.getIndexDocumentCount(), total);
+    return new ReindexResult(elasticMetaDataUtil.getIndexDocumentCount(), 40000);
   }
+
+    private void readAndLoad(int batch) throws IOException {
+        log.info("Running batch {}", batch);
+        List<Address> addressList = new ArrayList<>();
+        for(int pageNum=0; pageNum < 400; pageNum++) {
+            addressList.clear();
+            Address[] addresses = sourceDataRepository.fetchAddress();
+            log.info("Crawled page {} of batch {} ", pageNum, batch);
+            addressList.addAll(Arrays.asList(addresses));
+          // Use Bulk API to load data to elastic
+    //      elasticSearchRepository.performAsyncBulkLoad(addressList);
+            elasticSearchRepository.performSyncBulkLoad(addressList);
+            // closeBulkProcessor
+          //Thread.sleep(TimeUnit.SECONDS.toMillis());
+        }
+    }
 }

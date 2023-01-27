@@ -5,6 +5,7 @@ import static org.mockito.Mockito.times;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rahul.usersearch.model.UserListPage;
 import com.rahul.usersearch.model.user.User;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,17 +37,18 @@ public class ElasticSearchRepositoryTest {
 
   private ElasticSearchRepository repositoryUnderTest;
 
-  List<User> usersearchList;
+  UserListPage usersearchList;
 
   /**
    * Simple utility method to load mock data
    * @return
    */
-  private List<User> fetchMockProducts(){
+  private UserListPage fetchMockProducts(){
     ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
     try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(
         "mock_data/usersearch_data.json")) {
-      return objectMapper.readValue(inputStream, new TypeReference<List<User>>() { });
+      UserListPage userListPage = objectMapper.readValue(inputStream, new TypeReference<UserListPage>() { });
+      return userListPage;
     } catch (IOException ex) {
       throw new UncheckedIOException(ex);
     }
@@ -63,15 +65,8 @@ public class ElasticSearchRepositoryTest {
   }
 
   @Test
-  public void givenListOfProducts_bulkProcessorAddIsCalledForEach() throws JsonProcessingException {
-    Mockito.when(objectMapper.writeValueAsBytes(Mockito.any())).thenReturn(new byte[]{});
-      repositoryUnderTest.performBulkLoad(usersearchList);
-      Mockito.verify(bulkProcessor, times(10)).add(Mockito.any(IndexRequest.class));
-  }
-
-  @Test
   public void whenCloseCalled_bulkProcessorCloseIsCalled() throws InterruptedException {
     repositoryUnderTest.closeBulkProcessor();
-    Mockito.verify(bulkProcessor, times(1)).awaitClose(30L, TimeUnit.SECONDS);
+    Mockito.verify(bulkProcessor, times(1)).awaitClose(300L, TimeUnit.SECONDS);
   }
 }

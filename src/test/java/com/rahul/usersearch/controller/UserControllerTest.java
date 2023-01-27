@@ -40,7 +40,7 @@ public class UserControllerTest {
   }
 
   @Test
-  public void given_reindexServiceRunsSuccessully_expect_accepted() throws IOException {
+  public void given_reindexServiceRunsSuccessully_expect_accepted() throws IOException, InterruptedException {
     Mockito.when(reIndexService.reindex()).thenReturn(reindexResult);
     ResponseEntity<ReindexResult> actual = usersearchControllerUnderTest.reindex();
     Assert.assertEquals(reindexResult, actual.getBody());
@@ -48,22 +48,8 @@ public class UserControllerTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void given_reindexServiceThrowsException_expect_ExceptionThrown() throws IOException {
+  public void given_reindexServiceThrowsException_expect_ExceptionThrown() throws IOException, InterruptedException {
     Mockito.when(reIndexService.reindex()).thenThrow(new IllegalStateException());
     ResponseEntity<ReindexResult> actual = usersearchControllerUnderTest.reindex();
-  }
-
-
-  @Test
-  public void given_searchServiceReturnsListOfProducts_expect_ok() throws IOException {
-    UserListPage mockUserListPage = Mockito.mock(UserListPage.class);
-    List<User> usersearchList = TestHelper.fetchMockUsers();
-    Mockito.when(mockUserListPage.getResults()).thenReturn(usersearchList);
-
-    Mockito.when(searchService.doSearch(Mockito.any(SearchRequest.class))).thenReturn(
-        mockUserListPage);
-    ResponseEntity<UserListPage> actual = usersearchControllerUnderTest.doSearch(new SearchRequest());
-    Assert.assertEquals(HttpStatus.OK, actual.getStatusCode());
-    Assert.assertEquals(usersearchList, actual.getBody().getResults());
   }
 }

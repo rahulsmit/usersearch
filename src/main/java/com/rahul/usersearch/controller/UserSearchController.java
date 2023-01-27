@@ -31,7 +31,7 @@ public class UserSearchController {
   }
 
   @PostMapping(path = "reindex", produces = "application/json")
-  public ResponseEntity<ReindexResult> reindex() throws IOException {
+  public ResponseEntity<ReindexResult> reindex() throws IOException, InterruptedException {
     ReindexResult reindexResult = reIndexService.reindex();
     return ResponseEntity.accepted().body(reindexResult);
   }

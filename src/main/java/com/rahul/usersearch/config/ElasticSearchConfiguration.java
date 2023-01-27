@@ -9,7 +9,10 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.ByteSizeUnit;
+import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,17 +27,15 @@ public class ElasticSearchConfiguration {
   @Value("${es.host}")
   private String esHost;
 
-  @Bean(destroyMethod = "close")
-  public RestHighLevelClient restHighLevelClient() {
-    return new RestHighLevelClient(RestClient.builder(new HttpHost(esHost, 9200)));
-  }
+  @Autowired
+  public RestHighLevelClient restHighLevelClient;
 
   @Bean(destroyMethod = "close")
   @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
   public BulkProcessor bulkProcessor(){
     return BulkProcessor.builder(
         (request, bulkListener) ->
-            restHighLevelClient().bulkAsync(request, RequestOptions.DEFAULT, bulkListener),
+            restHighLevelClient.bulkAsync(request, RequestOptions.DEFAULT, bulkListener),
         new BulkProcessor.Listener() {
           @Override
           public void beforeBulk(long executionId, BulkRequest request) {
@@ -59,11 +60,25 @@ public class ElasticSearchConfiguration {
           public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
             log.error("Failed to execute bulk", failure);
           }
-        })
-        .setBulkActions(100) //100 records per bulk operation
-        .setFlushInterval(TimeValue.timeValueSeconds(10L))
-        .setBackoffPolicy(BackoffPolicy.constantBackoff(TimeValue.timeValueSeconds(1L), 3))
+        }).setConcurrentRequests(300)
+        .setBulkActions(10) //10000 records per bulk operation
+        .setFlushInterval(TimeValue.timeValueSeconds(120L))
+            .setBulkSize(new ByteSizeValue(2, ByteSizeUnit.MB))
+            .setBackoffPolicy(BackoffPolicy.constantBackoff(TimeValue.timeValueSeconds(5L), 5))
         .build();
   }
+
+//    @Bean(destroyMethod = "close")
+//    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+//    public BulkProcessor bulkProcessor2(){
+//        return BulkProcessor.builder(
+//                        (request) ->
+//                                restHighLevelClient.bulk(request, RequestOptions.DEFAULT)
+//                .setBulkActions(10) //10000 records per bulk operation
+//                .setFlushInterval(TimeValue.timeValueSeconds(120L))
+//                .setBulkSize(new ByteSizeValue(2, ByteSizeUnit.MB))
+//                .setBackoffPolicy(BackoffPolicy.constantBackoff(TimeValue.timeValueSeconds(5L), 5))
+//                .build();
+//    }
 
 }
