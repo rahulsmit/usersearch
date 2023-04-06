@@ -2,7 +2,7 @@ package com.rahul.usersearch.advice;
 
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.ElasticsearchStatusException;
+import org.opensearch.OpenSearchStatusException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class RestResponseEntityExceptionHandler
   }
 
   @ExceptionHandler(value
-      = { ElasticsearchStatusException.class })
+      = { OpenSearchStatusException.class })
   protected ResponseEntity<Object> handleIndexException(Exception ex, WebRequest request) {
     log.error("Error handled in advice: ", ex);
     return handleExceptionInternal(ex, "PLEASE CREATE INDEX FIRST",

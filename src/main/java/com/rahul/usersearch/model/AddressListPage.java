@@ -4,7 +4,6 @@ import com.rahul.usersearch.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.elasticsearch.cluster.metadata.AliasAction;
 
 import java.util.List;
 

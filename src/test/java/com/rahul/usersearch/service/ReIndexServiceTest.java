@@ -1,18 +1,15 @@
 package com.rahul.usersearch.service;
 
-import static org.mockito.Mockito.times;
-
 import com.rahul.usersearch.model.Info;
 import com.rahul.usersearch.model.UserListPage;
 import com.rahul.usersearch.model.user.User;
-import com.rahul.usersearch.repository.ElasticSearchRepository;
+import com.rahul.usersearch.repository.OpenSearchRepository;
 import com.rahul.usersearch.repository.SourceDataRepository;
 import com.rahul.usersearch.utils.ElasticMetadataUtil;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,7 +25,7 @@ public class ReIndexServiceTest {
   private SourceDataRepository sourceDataRepository;
 
   @Mock
-  private ElasticSearchRepository elasticSearchRepository;
+  private OpenSearchRepository openSearchRepository;
 
   @Mock
   private ElasticMetadataUtil elasticMetaDataUtil;

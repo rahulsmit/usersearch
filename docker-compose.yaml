@@ -4,13 +4,14 @@ services:
     image: 'usersearch:latest'
     ports:
       - "8080:8080"
-      - "5005:5005"
       - "8077"
     networks:
       - mynetwork
     environment:
 #      - "JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
       - "HOST_IP=host.docker.internal"
+    volumes:
+      - ${PWD}/log:/log
 #  elastic:
 #    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
 #    container_name: elasticsearch
@@ -22,8 +23,7 @@ services:
 #      memlock:
 #        soft: -1
 #        hard: -1
-#    volumes:
-#      - esdata:/usr/share/elasticsearch/data
+
 #    ports:
 #      - 9200:9200
 #    networks:
@@ -37,6 +37,3 @@ services:
 #      - mynetwork
 networks:
   mynetwork:
-#volumes:
-##  esdata:
-##    driver: local

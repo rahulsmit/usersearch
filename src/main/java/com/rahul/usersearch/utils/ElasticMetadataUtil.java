@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.opensearch.client.Request;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.Response;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -27,11 +29,12 @@ public class ElasticMetadataUtil {
   @Value("${es.index}")
   private String indexName;
 
+
   private final RestHighLevelClient restHighLevelClient;
   private final ObjectMapper objectMapper;
 
   @Autowired
-  public ElasticMetadataUtil(RestHighLevelClient restHighLevelClient,
+  public ElasticMetadataUtil(  @Qualifier("common") RestHighLevelClient restHighLevelClient,
       ObjectMapper objectMapper) {
     this.restHighLevelClient = restHighLevelClient;
     this.objectMapper = objectMapper;
@@ -58,8 +61,9 @@ public class ElasticMetadataUtil {
    */
   public int getIndexDocumentCount() throws IOException {
     RestClient lowLevelClient = restHighLevelClient.getLowLevelClient();
-    Response refresh = lowLevelClient.performRequest("POST", indexName + "*/_refresh");
-    Response countResponse = lowLevelClient.performRequest("GET", indexName+"*/_count");
+
+    Response refresh = lowLevelClient.performRequest(new Request("POST", indexName + "*/_refresh"));
+    Response countResponse = lowLevelClient.performRequest(new Request("GET", indexName + "*/_count"));
     JsonNode jsonNode = objectMapper.readValue(countResponse.getEntity().getContent(), JsonNode.class);
     return jsonNode.findValue("count").asInt();
   }

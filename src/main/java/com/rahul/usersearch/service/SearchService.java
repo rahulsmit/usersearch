@@ -1,56 +1,72 @@
 package com.rahul.usersearch.service;
 
-import com.rahul.usersearch.model.Info;
 import com.rahul.usersearch.model.UserListPage;
-import com.rahul.usersearch.model.SearchRequest;
 import com.rahul.usersearch.model.user.User;
-import com.rahul.usersearch.repository.ElasticSearchRepository;
+import com.rahul.usersearch.repository.OpenSearchRepository;
 import com.rahul.usersearch.utils.ElasticDSLBuilder;
 import com.rahul.usersearch.utils.ElasticResponseProcessor;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-import org.elasticsearch.action.search.SearchResponse;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
+import java.util.Random;
+import org.opensearch.action.search.SearchResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-@CacheConfig(cacheNames = "usersearch-search-cache")
 public class SearchService {
 
   public static int PAGE_SIZE = 10;
 
-  private final ElasticSearchRepository elasticSearchRepository;
-  private final ElasticDSLBuilder elasticDSLBuilder;
+  private final OpenSearchRepository openSearchRepository;
   private final ElasticResponseProcessor elasticResponseProcessor;
 
-  public SearchService(ElasticSearchRepository elasticSearchRepository,
-      ElasticDSLBuilder elasticDSLBuilder,
-      ElasticResponseProcessor elasticResponseProcessor) {
-    this.elasticSearchRepository = elasticSearchRepository;
-    this.elasticDSLBuilder = elasticDSLBuilder;
+  public static String[] indexList = new String [] {"cicqueuehistorysummary-000001",
+          "cicqueuehistorysummary-000002",
+    "cicqueuehistorysummary-000003",
+    "cicqueuehistorysummary-000004",
+    "cicqueuehistorysummary-000005",
+    "cicqueuehistorysummary-000006",
+    "cicqueuehistorysummary-000007",
+    "cicqueuehistorysummary-000008",
+    "cicqueuehistorysummary-000009",
+    "cicqueuehistorysummary-000010",
+    "cicqueuehistorysummary-000011",
+    "cicqueuehistorysummary-000012",
+    "cicqueuehistorysummary-000013"};
+
+
+  public SearchService(OpenSearchRepository openSearchRepository,
+                       ElasticResponseProcessor elasticResponseProcessor) {
+    this.openSearchRepository = openSearchRepository;
     this.elasticResponseProcessor = elasticResponseProcessor;
   }
 
-  @Cacheable
-  public UserListPage doSearch(SearchRequest searchRequest) throws IOException {
+  public UserListPage doSearch() throws IOException {
 
     //Get elastic search domain object
-    SearchResponse searchResponse = elasticSearchRepository
-        .executeSearchQuery(elasticDSLBuilder.createDSLQuery(searchRequest));
+    SearchResponse searchResponse = openSearchRepository
+        .executeSearchQuery(ElasticDSLBuilder.createDSLQuery());
 
     //Convert it to our business domain object i.e. User
     List<User> searchResults = elasticResponseProcessor
         .processElasticSearchHits(searchResponse.getHits(), User.class);
 
-    Info info = new Info("abcdefg",
-        Math.toIntExact(searchResponse.getHits().getTotalHits()),
-            Optional.of(searchRequest.getPageNumber()).orElse(1),
-        searchResults.size(),
-        "v1");
+    return new UserListPage(searchResults, null);
+  }
 
-    return new UserListPage(searchResults, info);
+  public void doSearch2() throws IOException {
+    int num = getRandomNumber(0, indexList.length);
+    openSearchRepository.executeSearchQuery(ElasticDSLBuilder.fullDSL(), "usersearch*");
+  }
+
+  public int getRandomNumber(int min, int max) {
+    Random random = new Random();
+    return random.nextInt(max - min) + min;
+  }
+
+  public boolean testConnect() throws IOException {
+    //return elasticSearchRepository.testConnection1() && elasticSearchRepository.testConnection2();
+
+    return openSearchRepository.testConnection1();
   }
 
 

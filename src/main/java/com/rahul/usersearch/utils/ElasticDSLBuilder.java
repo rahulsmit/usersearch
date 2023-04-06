@@ -1,41 +1,58 @@
 package com.rahul.usersearch.utils;
 
-import static com.rahul.usersearch.service.SearchService.PAGE_SIZE;
-
-import com.rahul.usersearch.model.SearchRequest;
-import java.util.Optional;
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Random;
 
 @Component
 public class ElasticDSLBuilder {
 
-  /**
-   * This method converts domain search request to elastic dsl.
-   * Also handles pagination for search results.
-   */
-  public SearchSourceBuilder createDSLQuery(SearchRequest searchRequest) {
-    BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+    /**
+     * This method converts domain search request to elastic dsl.
+     * Also handles pagination for search results.
+     *
+     * @return
+     */
+    public static SearchSourceBuilder createDSLQuery() throws IOException {
 
-    //filter check price range
-    queryBuilder.filter().add(QueryBuilders
-        .rangeQuery("dob.age")
-        .from(Optional.ofNullable(searchRequest.getMinAge()).orElse(0))
-        .to(Optional.ofNullable(searchRequest.getMaxAge()).orElse(Integer.MAX_VALUE)));
+        final String query = "{\n" +
+                "    \"wildcard\": {\n" +
+                "      \"username\": {\n" +
+                "        \"value\": \"*a*\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }";
 
-    // finally match executeSearchQuery term(s)
-    if (!Strings.isNullOrEmpty(searchRequest.getSearch())) {
-      queryBuilder.must(QueryBuilders.simpleQueryStringQuery(searchRequest.getSearch()));
+
+        final SearchSourceBuilder qBuilder = new SearchSourceBuilder()
+                .query(QueryBuilders.wrapperQuery(query))
+                .size(getRandomNumberUsingNextInt(3000, 9000));
+
+        return qBuilder;
+
     }
 
-    return SearchSourceBuilder
-        .searchSource().query(queryBuilder)
-        .from((searchRequest.getPageNumber() - 1) * PAGE_SIZE)
-        .size(PAGE_SIZE)
-        .trackTotalHits(true);
-  }
+    public static String fullDSL() throws IOException {
+
+        final String query = "{\n" +
+                "  \"size\": 200,\n" +
+                "  \"query\": {\n" +
+                "    \"match_all\": {}\n" +
+                "  },\n" +
+                "  \"collapse\": {\n" +
+                "    \"field\": \"address.city.keyword\"\n" +
+                "  }\n" +
+                "}";
+        return query;
+
+    }
+
+    public static int getRandomNumberUsingNextInt(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
+    }
 
 }

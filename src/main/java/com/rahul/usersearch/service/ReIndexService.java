@@ -1,16 +1,16 @@
 package com.rahul.usersearch.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.rahul.usersearch.model.Address;
 import com.rahul.usersearch.model.ReindexResult;
-import com.rahul.usersearch.repository.ElasticSearchRepository;
+import com.rahul.usersearch.model.user.User;
+import com.rahul.usersearch.repository.OpenSearchRepository;
 import com.rahul.usersearch.repository.SourceDataRepository;
 import com.rahul.usersearch.utils.ElasticMetadataUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +21,16 @@ import org.springframework.stereotype.Service;
 public class ReIndexService {
 
   private final SourceDataRepository sourceDataRepository;
-  private final ElasticSearchRepository elasticSearchRepository;
+  private final OpenSearchRepository openSearchRepository;
   private final ElasticMetadataUtil elasticMetaDataUtil;
 
   @Autowired
   public ReIndexService(
       SourceDataRepository sourceDataRepository,
-      ElasticSearchRepository elasticSearchRepository,
+      OpenSearchRepository openSearchRepository,
       ElasticMetadataUtil elasticMetadataUtil) {
     this.sourceDataRepository = sourceDataRepository;
-    this.elasticSearchRepository = elasticSearchRepository;
+    this.openSearchRepository = openSearchRepository;
     this.elasticMetaDataUtil = elasticMetadataUtil;
   }
 
@@ -41,38 +41,37 @@ public class ReIndexService {
    */
   public ReindexResult reindex() throws IOException, InterruptedException {
 
-      for(int i=0; i < 50; i++){
-
-          int finalI = i;
-          CompletableFuture.runAsync(() -> {
-              try {
-                  readAndLoad(finalI);
-              } catch (IOException e) {
-                  log.error("readAndLoad error : ", e);
-              }
-          });
+      for(int i=1; i < 101; i++){
+          readAndLoad(i);
       }
-
-
-      elasticSearchRepository.closeBulkProcessor();
 
     // wrap results
     return new ReindexResult(elasticMetaDataUtil.getIndexDocumentCount(), 40000);
   }
 
-    private void readAndLoad(int batch) throws IOException {
-        log.info("Running batch {}", batch);
-        List<Address> addressList = new ArrayList<>();
+    private void readAndLoad(int batch) throws InterruptedException {
+        Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+
+        List<User> userList = new ArrayList<>();
         for(int pageNum=0; pageNum < 400; pageNum++) {
-            addressList.clear();
-            Address[] addresses = sourceDataRepository.fetchAddress();
-            log.info("Crawled page {} of batch {} ", pageNum, batch);
-            addressList.addAll(Arrays.asList(addresses));
-          // Use Bulk API to load data to elastic
-    //      elasticSearchRepository.performAsyncBulkLoad(addressList);
-            elasticSearchRepository.performSyncBulkLoad(addressList);
-            // closeBulkProcessor
-          //Thread.sleep(TimeUnit.SECONDS.toMillis());
+            log.info("\n============================= Running batch {} Page {} ==================================", batch, pageNum);
+            userList.clear();
+
+            for (int j=0; j<5; j++){
+                User[] users = sourceDataRepository.fetchUser();
+                userList.addAll(Arrays.asList(users));
+            }
+
+            log.info("Crawled page from source {} of batch {} record size {}", pageNum, batch, userList.size());
+            // Use Bulk API to load data to elastic
+                try {
+                    openSearchRepository.bulkIngestCluster(userList);
+                } catch (IOException e) {
+                    log.error("performSyncBulkLoad error : ", e);
+                }
+            log.info("\n============================= Finishing batch {} Page {} ==================================", batch, pageNum);
         }
+
+
     }
 }

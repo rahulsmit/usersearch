@@ -1,17 +1,17 @@
 plugins {
-	id 'org.springframework.boot' version '2.1.7.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'org.springframework.boot' version '2.7.8'
+	id 'io.spring.dependency-management' version '1.1.0'
 	id 'java'
 	id 'idea'
 	id 'eclipse'
 	//jib builds docker images for java projects very easily
-	id 'com.google.cloud.tools.jib' version '1.1.2'
+	id 'com.google.cloud.tools.jib' version '2.7.1'
 }
 
 group = 'com.rahul'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '11'
+targetCompatibility = '11'
 repositories {
 	mavenCentral()
 }
@@ -32,8 +32,7 @@ idea {
 
 ext {
 	// project dependency versions
-	springDataElasticSearchVersion='3.2.0.RC2'
-	lombokVersion = '1.16.20'
+	lombokVersion = '1.18.2'
 
 	// test dependency versions
 	assertjVersion = '3.11.1'
@@ -43,11 +42,17 @@ ext {
 
 dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-actuator')
-	implementation('org.elasticsearch.client:elasticsearch-rest-high-level-client:6.4.1')
+
+	// https://mvnrepository.com/artifact/org.opensearch.client/opensearch-rest-high-level-client
+	implementation 'org.opensearch.client:opensearch-rest-high-level-client:2.3.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
 	implementation('org.springframework.boot:spring-boot-starter-web')
-	implementation('org.springframework.boot:spring-boot-starter-cache')
-	implementation('org.springframework.data:spring-data-redis:2.1.7.RELEASE')
-	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+
+
+	implementation 'javax.validation:validation-api:2.0.1.Final'
+
+	//implementation group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version: '2.7.8'
+
 	implementation('org.apache.commons:commons-lang3:3.12.0')
 	implementation('redis.clients:jedis:2.9.0')
 	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
@@ -66,7 +71,7 @@ jib {
 
 	container {
 		mainClass = 'com.rahul.usersearch.UserSearchApplication'
-		jvmFlags = [ '-Djavax.net.debug=ssl', '-Djavax.net.ssl.trustStore=certificate-host.pem', '-Dlog4j.configurationFile=log4j2-local.xml', "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:MaxRAMFraction=2", "-Xss512k", "-XX:+UseConcMarkSweepGC", "-XX:+UseParNewGC", "-XX:NewRatio=1" ]
+		jvmFlags = [ '-Djavax.net.debug=ssl', '-Djavax.net.ssl.trustStore=certificate-host.pem', '-Dlog4j2.configurationFile=log4j2.xml', "-XX:+UnlockExperimentalVMOptions", "-Xss512k", "-XX:NewRatio=1" ]
 		ports = ['8080']
 		environment = ["app": project.name ]
 	}
@@ -75,11 +80,11 @@ jib {
 tasks.build.dependsOn tasks.jibDockerBuild
 
 springBoot {
-	mainClassName = "com.rahul.usersearch.UserSearchApplication"
+	mainClass = "com.rahul.usersearch.UserSearchApplication"
 }
 
 bootRun {
-	jvmArgs = ['-Dspring.profiles.active=local', '-Dlog4j.configurationFile=log4j2-local.xml', '-Djavax.net.ssl.trustStore=es-truststore.jks']
+	jvmArgs = ['-Dspring.profiles.active=default', '-Dlog4j2.configurationFile=log4j2.xml', '-Djavax.net.ssl.trustStore=es-truststore.jks']
 }
 
 bootJar {

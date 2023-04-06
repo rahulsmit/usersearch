@@ -1,0 +1,119 @@
+2023-04-05 20:32:11.311  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : Client [[host=https://host.docker.internal:9200]]
+2023-04-05 20:32:11.414 ERROR 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : Cannot connect to cluster
+
+java.net.ConnectException: Connection refused
+	at org.elasticsearch.client.RestClient$SyncResponseListener.get(RestClient.java:959)
+	at org.elasticsearch.client.RestClient.performRequest(RestClient.java:233)
+	at org.elasticsearch.client.RestHighLevelClient.internalPerformRequest(RestHighLevelClient.java:1765)
+	at org.elasticsearch.client.RestHighLevelClient.performRequest(RestHighLevelClient.java:1735)
+	at org.elasticsearch.client.RestHighLevelClient.performRequestAndParseEntity(RestHighLevelClient.java:1697)
+	at org.elasticsearch.client.ClusterClient.health(ClusterClient.java:146)
+	at com.rahul.usersearch.repository.OpenSearchRepository.testConnection1(ElasticSearchRepository.java:144)
+	at com.rahul.usersearch.repository.OpenSearchRepository$$FastClassBySpringCGLIB$$6cb77ef3.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:749)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:139)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:688)
+	at com.rahul.usersearch.repository.OpenSearchRepository$$EnhancerBySpringCGLIB$$89f80a98.testConnection1(<generated>)
+	at com.rahul.usersearch.service.SearchService.testConnect(SearchService.java:70)
+	at com.rahul.usersearch.controller.UserSearchController.test(UserSearchController.java:64)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:190)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:138)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:104)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:892)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1039)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:942)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1005)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:897)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:634)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:882)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:741)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.boot.actuate.web.trace.servlet.HttpTraceFilter.doFilterInternal(HttpTraceFilter.java:88)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:92)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.filterAndRecordMetrics(WebMvcMetricsFilter.java:114)
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:104)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:490)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:139)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:853)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1587)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:716)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvent(DefaultConnectingIOReactor.java:171)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvents(DefaultConnectingIOReactor.java:145)
+	at org.apache.http.impl.nio.reactor.AbstractMultiworkerIOReactor.execute(AbstractMultiworkerIOReactor.java:351)
+	at org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager.execute(PoolingNHttpClientConnectionManager.java:221)
+	at org.apache.http.impl.nio.client.CloseableHttpAsyncClientBase$1.run(CloseableHttpAsyncClientBase.java:64)
+	... 1 common frames omitted
+
+2023-04-05 20:33:37.050  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : Client [[host=https://host.docker.internal:9200]]
+2023-04-05 20:33:38.245  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : ClusterHealthResponse: {"cluster_name":"opensearch","status":"green","timed_out":false,"number_of_nodes":2,"number_of_data_nodes":1,"active_primary_shards":4,"active_shards":4,"relocating_shards":0,"initializing_shards":0,"unassigned_shards":0,"delayed_unassigned_shards":0,"number_of_pending_tasks":0,"number_of_in_flight_fetch":0,"task_max_waiting_in_queue_millis":0,"active_shards_percent_as_number":100.0}
+2023-04-05 20:33:54.435  INFO 1 --- [http-nio-8080-exec-3] c.r.u.r.ElasticSearchRepository          : -----> Bulk Sync rk_test_cluster
+2023-04-05 20:33:54.438  INFO 1 --- [http-nio-8080-exec-3] c.r.u.r.ElasticSearchRepository          : Bulk loading 500 users to elastic index: usersearch01 
+2023-04-05 20:35:19.269  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : Client [[host=https://host.docker.internal:9200]]
+2023-04-05 20:35:20.667  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : ClusterHealthResponse: {"cluster_name":"opensearch","status":"green","timed_out":false,"number_of_nodes":2,"number_of_data_nodes":1,"active_primary_shards":4,"active_shards":4,"relocating_shards":0,"initializing_shards":0,"unassigned_shards":0,"delayed_unassigned_shards":0,"number_of_pending_tasks":0,"number_of_in_flight_fetch":0,"task_max_waiting_in_queue_millis":0,"active_shards_percent_as_number":100.0}
+2023-04-05 20:35:34.292  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : -----> Bulk Sync rk_test_cluster
+2023-04-05 20:35:34.294  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : Bulk loading 500 users to elastic index: usersearch01 
+2023-04-05 20:39:19.564  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : Client [[host=https://host.docker.internal:9200]]
+2023-04-05 20:39:20.560  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : ClusterHealthResponse: {"cluster_name":"opensearch","status":"green","timed_out":false,"number_of_nodes":2,"number_of_data_nodes":1,"active_primary_shards":4,"active_shards":4,"relocating_shards":0,"initializing_shards":0,"unassigned_shards":0,"delayed_unassigned_shards":0,"number_of_pending_tasks":0,"number_of_in_flight_fetch":0,"task_max_waiting_in_queue_millis":0,"active_shards_percent_as_number":100.0}
+2023-04-05 20:39:40.806  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : -----> Bulk Sync rk_test_cluster
+2023-04-05 20:39:40.809  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : Bulk loading 500 users to elastic index: usersearch01 
+2023-04-05 20:50:38.631  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : Client [[host=https://host.docker.internal:9200]]
+2023-04-05 20:50:41.441  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : ClusterHealthResponse: {"cluster_name":"opensearch","status":"green","timed_out":false,"number_of_nodes":2,"number_of_data_nodes":1,"active_primary_shards":4,"active_shards":4,"relocating_shards":0,"initializing_shards":0,"unassigned_shards":0,"delayed_unassigned_shards":0,"number_of_pending_tasks":0,"number_of_in_flight_fetch":0,"task_max_waiting_in_queue_millis":0,"active_shards_percent_as_number":100.0}
+2023-04-05 20:50:54.649  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : -----> Bulk Sync rk_test_cluster
+2023-04-05 20:50:54.652  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : Bulk loading 500 users to elastic index: usersearch01 
+2023-04-05 20:52:20.452  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : Client [[host=https://host.docker.internal:9200]]
+2023-04-05 20:52:22.887  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : ClusterHealthResponse: {"cluster_name":"opensearch","status":"green","timed_out":false,"number_of_nodes":2,"number_of_data_nodes":1,"active_primary_shards":4,"active_shards":4,"relocating_shards":0,"initializing_shards":0,"unassigned_shards":0,"delayed_unassigned_shards":0,"number_of_pending_tasks":0,"number_of_in_flight_fetch":0,"task_max_waiting_in_queue_millis":0,"active_shards_percent_as_number":100.0}
+2023-04-05 20:52:36.898  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : -----> Bulk Sync rk_test_cluster
+2023-04-05 20:52:36.901  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : Bulk loading 500 users to elastic index: usersearch01 
+2023-04-05 20:53:55.821  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : Client [[host=https://host.docker.internal:9200]]
+2023-04-05 20:53:56.769  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : ClusterHealthResponse: {"cluster_name":"opensearch","status":"green","timed_out":false,"number_of_nodes":2,"number_of_data_nodes":1,"active_primary_shards":4,"active_shards":4,"relocating_shards":0,"initializing_shards":0,"unassigned_shards":0,"delayed_unassigned_shards":0,"number_of_pending_tasks":0,"number_of_in_flight_fetch":0,"task_max_waiting_in_queue_millis":0,"active_shards_percent_as_number":100.0}
+2023-04-05 20:54:17.349  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : -----> Bulk Sync rk_test_cluster
+2023-04-05 20:54:17.351  INFO 1 --- [http-nio-8080-exec-2] c.r.u.r.ElasticSearchRepository          : Bulk loading 500 users to elastic index: usersearch01 
+2023-04-05 21:01:15.204  INFO 1 --- [http-nio-8080-exec-1] c.r.u.r.ElasticSearchRepository          : Client [[host=https://host.docker.internal:9200]]
